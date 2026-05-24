@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Daily Hub · Inversiones</title>
+<style>
+:root {
+  --bg:#f8fafc; --bg2:#f1f5f9; --card:#ffffff; --border:#e2e8f0;
+  --navy:#0f172a; --blue:#2563eb; --blue_lt:#eff6ff;
+  --teal:#0d9488; --teal_lt:#f0fdfa;
+  --green:#16a34a; --green_lt:#dcfce7;
+  --red:#dc2626; --red_lt:#fee2e2;
+  --amber:#d97706; --amber_lt:#fffbeb;
+  --gray:#374151; --muted:#6b7280; --dim:#9ca3af;
+  --shadow:0 1px 3px rgba(0,0,0,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--navy);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;min-height:100vh}
+
+/* HEADER */
+header{background:#fff;border-bottom:1px solid var(--border);padding:12px 16px;position:sticky;top:0;z-index:50;box-shadow:var(--shadow)}
+.hdr-row1{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--blue),var(--teal));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.logo-text{font-size:17px;font-weight:800;color:var(--navy)}
+.logo-sub{font-size:10px;color:var(--muted);font-weight:500;letter-spacing:.5px}
+.hdr-actions{display:flex;gap:8px;align-items:center}
+.btn-icon{width:36px;height:36px;background:var(--bg2);border:1px solid var(--border);border-radius:9px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray)}
+.btn-icon:active{transform:scale(.93)}
+.btn-reset{padding:8px 14px;background:var(--red);border:none;border-radius:9px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px}
+.btn-reset:active{opacity:.85;transform:scale(.95)}
+.status-pill{display:flex;align-items:center;gap:6px;padding:5px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;font-size:11px;color:var(--muted)}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.sdot.err{background:var(--red)}
+.sdot.load{background:var(--amber);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* DATE BAR */
+.date-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.date-bar input[type=date]{border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;font-size:14px;font-weight:700;color:var(--navy);background:var(--amber_lt);outline:none;font-family:inherit}
+.dia-badge{font-size:12px;font-weight:700;color:var(--blue);padding:4px 10px;background:var(--blue_lt);border-radius:6px}
+.sem-info{font-size:10px;color:var(--muted)}
+
+/* CONFIG */
+.cfg-wrap{margin:12px 14px;background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+.cfg-toggle{padding:11px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.cfg-title{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+.cfg-body{display:none;padding:0 14px 14px;border-top:1px solid var(--border)}
+.cfg-body.open{display:block}
+.cfg-label{font-size:11px;color:var(--muted);font-weight:600;margin:10px 0 5px;display:block}
+.cfg-input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;color:var(--navy);background:var(--bg);outline:none;font-family:monospace}
+.cfg-input:focus{border-color:var(--blue)}
+.cfg-hint{font-size:10px;color:var(--dim);margin-top:4px;line-height:1.5}
+.btn-save{width:100%;margin-top:12px;padding:11px;background:var(--blue);border:none;border-radius:9px;color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+
+/* TABS */
+.tabs{display:flex;gap:8px;padding:0 14px;margin:12px 0 10px}
+.tab-btn{padding:8px 16px;background:#fff;border:1.5px solid var(--border);border-radius:10px;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer}
+.tab-btn.active{background:var(--blue);border-color:var(--blue);color:#fff}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px;margin-bottom:14px}
+.kpi-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:var(--shadow);border-top:3px solid var(--accent,var(--blue))}
+.kpi-card.wide{grid-column:1/-1}
+.kpi-lbl{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.kpi-val{font-size:24px;font-weight:800;color:var(--navy);font-family:'SF Mono',monospace;line-height:1;margin-bottom:3px}
+.kpi-val.pos{color:var(--green)}
+.kpi-val.neg{color:var(--red)}
+.kpi-sub{font-size:11px;color:var(--muted);font-family:'SF Mono',monospace}
+.kpi-sub.pos{color:var(--green)}
+.kpi-sub.neg{color:var(--red)}
+
+/* SECTION TITLE */
+.sec-title{padding:0 14px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.sec-title h2{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.sec-line{flex:1;height:1px;background:var(--border)}
+
+/* CAT CARDS */
+.cats{padding:0 14px;margin-bottom:16px;display:flex;flex-direction:column;gap:10px}
+.cat-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+.cat-hdr{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.cat-hdr:active{background:var(--bg2)}
+.cat-hdr-l{display:flex;align-items:center;gap:10px}
+.cat-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.cat-name{font-size:15px;font-weight:800;color:var(--navy)}
+.cat-arrow{font-size:11px;color:var(--dim);transition:transform .2s}
+.cat-card.open .cat-arrow{transform:rotate(180deg)}
+.cat-hdr-r{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.cat-valor{font-family:'SF Mono',monospace;font-size:17px;font-weight:700;color:var(--navy)}
+.cat-stats{display:flex;gap:10px;padding:0 14px 12px}
+.cat-stat{display:flex;flex-direction:column;gap:1px}
+.cat-stat-lbl{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.cat-stat-val{font-size:13px;font-family:'SF Mono',monospace;font-weight:700;color:var(--navy)}
+.badge{font-size:12px;font-weight:700;font-family:'SF Mono',monospace;padding:3px 8px;border-radius:6px}
+.badge.pos{background:var(--green_lt);color:var(--green)}
+.badge.neg{background:var(--red_lt);color:var(--red)}
+.badge.neu{background:var(--bg2);color:var(--muted)}
+
+/* ASSET LIST */
+.asset-list{display:none;border-top:1px solid var(--border)}
+.cat-card.open .asset-list{display:block}
+.al-hdr-row{display:grid;grid-template-columns:1fr 90px 80px 72px;padding:7px 14px;background:var(--bg2);border-bottom:1px solid var(--border);gap:6px}
+.al-hdr{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--dim)}
+.al-hdr:not(:first-child){text-align:right}
+.asset-row{display:grid;grid-template-columns:1fr 90px 80px 72px;padding:10px 14px;border-bottom:1px solid var(--border);align-items:center;gap:6px}
+.asset-row:last-child{border-bottom:none}
+.asset-name{font-size:13px;font-weight:700;color:var(--navy)}
+.asset-val{font-family:'SF Mono',monospace;font-size:13px;color:var(--navy);text-align:right;font-weight:600}
+.pct-wrap{position:relative;display:flex;align-items:center;justify-content:flex-end}
+.pct-inp{width:76px;padding:7px 20px 7px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-weight:700;font-family:'SF Mono',monospace;color:var(--navy);background:var(--amber_lt);text-align:right;outline:none;-webkit-appearance:none}
+.pct-inp:focus{border-color:var(--blue);background:var(--blue_lt)}
+.pct-inp.pos{background:var(--green_lt);border-color:var(--green);color:var(--green)}
+.pct-inp.neg{background:var(--red_lt);border-color:var(--red);color:var(--red)}
+.pct-sym{position:absolute;right:6px;font-size:12px;color:var(--dim);pointer-events:none;font-weight:600}
+.asset-benef{font-family:'SF Mono',monospace;font-size:13px;font-weight:700;text-align:right}
+
+/* HISTORIAL */
+.hist-wrap{padding:0 14px}
+.hist-empty{text-align:center;padding:30px;color:var(--dim);font-size:14px;line-height:1.8}
+.hist-week-sep{display:flex;align-items:center;gap:8px;padding:10px 0 6px}
+.hist-week-lbl{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;white-space:nowrap}
+.hist-week-line{flex:1;height:1px;background:var(--border)}
+.hist-week-total{font-size:11px;font-weight:800;padding:3px 10px;border-radius:6px;font-family:'SF Mono',monospace}
+.hist-card{background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden;box-shadow:var(--shadow)}
+.hist-hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border)}
+.hist-date{font-size:13px;font-weight:800;color:var(--navy)}
+.hist-day{font-size:10px;font-weight:700;color:var(--blue);background:var(--blue_lt);padding:2px 8px;border-radius:5px}
+.hist-grid{display:grid;grid-template-columns:1fr 1fr 1fr}
+.hist-cell{padding:10px 14px;border-right:1px solid var(--border)}
+.hist-cell:last-child{border-right:none}
+.hist-cell-lbl{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
+.hist-cell-val{font-size:15px;font-weight:800;font-family:'SF Mono',monospace}
+.hist-cell-sub{font-size:10px;color:var(--muted);font-family:'SF Mono',monospace}
+
+/* MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-ov.open{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:18px;padding:24px;width:100%;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.15);transform:scale(.9);transition:transform .2s}
+.modal-ov.open .modal{transform:scale(1)}
+.modal h3{font-size:18px;font-weight:800;margin-bottom:8px}
+.modal p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.modal-btns{display:flex;gap:10px}
+.btn-cancel{flex:1;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;color:var(--gray)}
+.btn-confirm{flex:1;padding:12px;background:var(--red);border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;color:#fff}
+
+footer{padding:20px 14px;text-align:center;font-size:10px;color:var(--dim);letter-spacing:.3px}
+.pos{color:var(--green)}.neg{color:var(--red)}.neu{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-row1">
+    <div class="logo">
+      <div class="logo-icon">📈</div>
+      <div>
+        <div class="logo-text">Daily Hub</div>
+        <div class="logo-sub">CONTROL DIARIO</div>
+      </div>
+    </div>
+    <div class="hdr-actions">
+      <div class="status-pill">
+        <div class="sdot load" id="sDot"></div>
+        <span id="sTxt">Cargando...</span>
+      </div>
+      <button class="btn-icon" onclick="loadData()">↻</button>
+      <button class="btn-reset" onclick="showReset()">🔄 Nuevo día</button>
+    </div>
+  </div>
+  <div class="date-bar">
+    <span style="font-size:11px;font-weight:700;color:var(--muted)">📅 HOY:</span>
+    <input type="date" id="fechaHoy" onchange="onDateChange()"/>
+    <span class="dia-badge" id="diaBadge"></span>
+    <span class="sem-info" id="semInfo"></span>
+  </div>
+</header>
+
+<div class="cfg-wrap">
+  <div class="cfg-toggle" onclick="toggleCfg()">
+    <span class="cfg-title">⚙️ Configuración Google Sheet</span>
+    <span id="cfgArr" style="color:var(--dim);font-size:13px">▼</span>
+  </div>
+  <div class="cfg-body" id="cfgBody">
+    <label class="cfg-label">ID DEL GOOGLE SHEET</label>
+    <input class="cfg-input" id="cfgId" placeholder="1gQ2tEH4QiDCNBzoYMjL--IBRRKkr8JEr"/>
+    <div class="cfg-hint">Copia el ID entre /d/ y /edit de la URL del Sheet</div>
+    <label class="cfg-label">API KEY</label>
+    <input class="cfg-input" id="cfgKey" type="password" placeholder="AIzaSy..."/>
+    <button class="btn-save" onclick="saveConfig()">💾 Guardar y conectar</button>
+  </div>
+</div>
+
+<div style="padding:12px 14px 6px">
+  <span style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)">Resumen del día</span>
+</div>
+<div class="kpi-grid">
+  <div class="kpi-card wide" style="--accent:var(--navy)">
+    <div class="kpi-lbl">Valor Total Cartera Hoy</div>
+    <div class="kpi-val" id="kTotal">—</div>
+    <div class="kpi-sub" id="kTotalSub">Introduce los valores de ayer para empezar</div>
+  </div>
+  <div class="kpi-card" style="--accent:var(--green)">
+    <div class="kpi-lbl">Benef. Día €</div>
+    <div class="kpi-val" id="kDia">—</div>
+    <div class="kpi-sub" id="kDiaPct">—</div>
+  </div>
+  <div class="kpi-card" style="--accent:var(--blue)">
+    <div class="kpi-lbl">Benef. Semana €</div>
+    <div class="kpi-val" id="kSem">—</div>
+    <div class="kpi-sub" id="kSemPct">—</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" id="tbHoy" onclick="switchTab('hoy')">📊 Hoy</button>
+  <button class="tab-btn" id="tbHist" onclick="switchTab('hist')">📋 Histórico</button>
+</div>
+
+<div id="tabHoy">
+  <div class="sec-title"><h2>Por Categoría</h2><div class="sec-line"></div></div>
+  <div class="cats" id="catsDiv"></div>
+</div>
+
+<div id="tabHist" style="display:none">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:0 14px;margin-bottom:10px">
+    <span style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)">Historial de días</span>
+    <button onclick="clearHist()" style="font-size:10px;color:var(--red);background:none;border:none;cursor:pointer;font-weight:700">🗑 Borrar todo</button>
+  </div>
+  <div class="hist-wrap" id="histDiv"></div>
+</div>
+
+<footer>Daily Hub · Datos desde Google Sheets<br>Pulsa "Nuevo día" para guardar y pasar al siguiente día</footer>
+
+<div class="modal-ov" id="resetModal">
+  <div class="modal">
+    <h3>🔄 Nuevo día</h3>
+    <p>Guarda los resultados de hoy en el historial y traslada el valor actual como valor inicial de mañana. Los porcentajes se ponen a 0.</p>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeReset()">Cancelar</button>
+      <button class="btn-confirm" onclick="confirmReset()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const CATS = [
+  {name:'RENTA VARIABLE',color:'#2563eb',assets:[
+    {name:'MSCI World',row:7},{name:'Emergentes',row:8},{name:'Pictet China',row:9},
+    {name:'Cobas Large Cap',row:10},{name:'SP500',row:11},{name:'MyInvestor Value C',row:12},
+    {name:'Horos Value',row:13},{name:'Robeco',row:14}]},
+  {name:'RENTA FIJA',color:'#0d9488',assets:[
+    {name:'Storm Bond Fund',row:18},{name:'Neuberger',row:19},
+    {name:'DNCA',row:20},{name:'Carminag Portfolio',row:21}]},
+  {name:'RENTA MIXTA',color:'#7c3aed',assets:[
+    {name:'Gamma Global',row:25},{name:'Ábaco Renta Fija Mixta',row:26}]},
+  {name:'NIÑOS',color:'#db2777',assets:[
+    {name:'MSCI CF (niños)',row:30},{name:'MSCI Alex (niños)',row:31},
+    {name:'Bitcoin (niños)',row:32},{name:'iShares EM CF',row:33},{name:'iShares EM Alex',row:34}]},
+  {name:'ETF / CRIPTO',color:'#d97706',assets:[
+    {name:'Bitcoin ETF',row:38},{name:'Ethereum ETF',row:39},
+    {name:'Gold ETF',row:40},{name:'Solana',row:41},{name:'B/E',row:42}]},
+  {name:'ACCIONES',color:'#dc2626',assets:[
+    {name:'Nextil',row:46},{name:'OHL',row:47},{name:'Amper',row:48},
+    {name:'Solid Power',row:49},{name:'Rezolve',row:50}]},
+  {name:'DEPÓSITOS',color:'#16a34a',assets:[
+    {name:'MyPremium',row:54},{name:'Santander',row:55}]},
+  {name:'OTROS',color:'#6b7280',assets:[
+    {name:'Groupama',row:59}]}
+];
+
+let valAyer={}, pct={}, valSem={};
+let cfg={sheetId:localStorage.getItem('dhId')||'',apiKey:localStorage.getItem('dhKey')||''};
+
+// ── HELPERS ──
+function fE(n){
+  if(n===null||n===undefined||isNaN(n))return'—';
+  return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR',minimumFractionDigits:2}).format(n);
+}
+function fEC(n){
+  if(!n&&n!==0)return'—';
+  const a=Math.abs(n),s=n<0?'-':'';
+  if(a>=1000)return s+(a/1000).toFixed(1)+'k€';
+  return s+a.toFixed(0)+'€';
+}
+function fP(n){
+  if(n===null||n===undefined||isNaN(n))return'—';
+  return(n>0?'+':'')+n.toFixed(2)+'%';
+}
+function cls(n){return n>0.001?'pos':n<-0.001?'neg':'neu'}
+function setStatus(t,m){
+  document.getElementById('sDot').className='sdot'+(t==='err'?' err':t==='load'?' load':'');
+  document.getElementById('sTxt').textContent=m;
+}
+function parseNum(v){
+  if(!v&&v!==0)return null;
+  let s=String(v).trim();
+  const neg=s.startsWith('(')&&s.endsWith(')');
+  s=s.replace(/[()€%\s]/g,'');
+  if(s.includes(',')&&s.includes('.'))s=s.replace(/\./g,'').replace(',','.');
+  else if(s.includes(','))s=s.replace(',','.');
+  const n=parseFloat(s);
+  return isNaN(n)?null:(neg?-n:n);
+}
+function getMonday(d){
+  const dt=new Date(d);
+  const day=dt.getDay();
+  dt.setDate(dt.getDate()+(day===0?-6:1-day));
+  dt.setHours(0,0,0,0);
+  return dt;
+}
+
+// ── DATE ──
+function initDate(){
+  const saved=localStorage.getItem('dhFecha')||new Date().toISOString().split('T')[0];
+  document.getElementById('fechaHoy').value=saved;
+  updateDateUI(saved);
+}
+function onDateChange(){
+  const v=document.getElementById('fechaHoy').value;
+  if(!v)return;
+  localStorage.setItem('dhFecha',v);
+  updateDateUI(v);
+  checkWeekReset(v);
+}
+function updateDateUI(v){
+  const d=new Date(v+'T12:00:00');
+  const dias=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  document.getElementById('diaBadge').textContent=dias[d.getDay()];
+  const mon=getMonday(d);
+  const sun=new Date(mon);sun.setDate(sun.getDate()+6);
+  const fmt=x=>x.toLocaleDateString('es-ES',{day:'numeric',month:'short'});
+  document.getElementById('semInfo').textContent='Semana: '+fmt(mon)+' – '+fmt(sun);
+}
+function checkWeekReset(v){
+  const d=new Date(v+'T12:00:00');
+  if(d.getDay()!==1)return;
+  const mon=getMonday(d).toISOString().split('T')[0];
+  if(localStorage.getItem('dhLastWeek')===mon)return;
+  CATS.forEach(c=>c.assets.forEach(a=>{
+    const r=calcA(a.row);
+    valSem[a.row]=r.ayer;
+  }));
+  localStorage.setItem('dhLastWeek',mon);
+  saveState();
+  recalc();
+  setStatus('ok','✅ Semana reseteada (Lunes)');
+}
+
+// ── CONFIG ──
+function toggleCfg(){
+  const b=document.getElementById('cfgBody');
+  const open=b.classList.toggle('open');
+  document.getElementById('cfgArr').textContent=open?'▲':'▼';
+}
+function saveConfig(){
+  let id=document.getElementById('cfgId').value.trim();
+  const m=id.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if(m)id=m[1];
+  cfg.sheetId=id;
+  cfg.apiKey=document.getElementById('cfgKey').value.trim();
+  localStorage.setItem('dhId',cfg.sheetId);
+  localStorage.setItem('dhKey',cfg.apiKey);
+  document.getElementById('cfgId').value=id;
+  toggleCfg();
+  loadData();
+}
+
+// ── LOAD FROM SHEET ──
+async function loadData(){
+  if(!cfg.sheetId||!cfg.apiKey){setStatus('err','Configura el Sheet');toggleCfg();return;}
+  setStatus('load','Cargando...');
+  try{
+    let id=cfg.sheetId.trim();
+    const url=`https://sheets.googleapis.com/v4/spreadsheets/${id}/values/HOY!A1:H70?key=${cfg.apiKey.trim()}`;
+    const r=await fetch(url);
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(`HTTP ${r.status}: ${e?.error?.message||''}`);}
+    const data=await r.json();
+    const rows=data.values||[];
+    CATS.forEach(c=>c.assets.forEach(a=>{
+      const ri=a.row-1;
+      if(rows[ri]&&rows[ri][1]){
+        const v=parseNum(rows[ri][1]);
+        if(v!==null&&v>0)valAyer[a.row]=v;
+      }
+    }));
+    saveState();
+    rebuildPctInputs();
+    recalc();
+    setStatus('ok','Cargado · '+new Date().toLocaleTimeString('es-ES'));
+  }catch(e){
+    let m=e.message;
+    if(m.includes('400'))m='Error 400 — verifica ID y API key';
+    if(m.includes('403'))m='Acceso denegado — haz el Sheet público';
+    if(m.includes('404'))m='Sheet no encontrado';
+    setStatus('err',m);
+  }
+}
+
+// ── BUILD UI ──
+function buildCats(){
+  const div=document.getElementById('catsDiv');
+  div.innerHTML='';
+  CATS.forEach((cat,ci)=>{
+    const card=document.createElement('div');
+    card.className='cat-card';
+    card.id='cat-'+ci;
+    card.innerHTML=`
+      <div class="cat-hdr" onclick="toggleCat(${ci})">
+        <div class="cat-hdr-l">
+          <span class="cat-dot" style="background:${cat.color}"></span>
+          <span class="cat-name">${cat.name}</span>
+          <span class="cat-arrow">▼</span>
+        </div>
+        <div class="cat-hdr-r">
+          <span class="cat-valor" id="cv-${ci}">—</span>
+          <span class="badge neu" id="cb-${ci}">—</span>
+        </div>
+      </div>
+      <div class="cat-stats">
+        <div class="cat-stat"><span class="cat-stat-lbl">Benef. Día</span><span class="cat-stat-val" id="cd-${ci}">—</span></div>
+        <div class="cat-stat"><span class="cat-stat-lbl">Benef. Semana</span><span class="cat-stat-val" id="cs-${ci}">—</span></div>
+        <div class="cat-stat"><span class="cat-stat-lbl">% Día</span><span class="cat-stat-val" id="cp-${ci}">—</span></div>
+      </div>
+      <div class="asset-list" id="al-${ci}">
+        <div class="al-hdr-row">
+          <span class="al-hdr">ACTIVO</span>
+          <span class="al-hdr">VALOR HOY</span>
+          <span class="al-hdr">% DÍA</span>
+          <span class="al-hdr">BENEF.</span>
+        </div>
+        ${cat.assets.map(a=>`
+          <div class="asset-row">
+            <span class="asset-name">${a.name}</span>
+            <span class="asset-val" id="av-${a.row}">—</span>
+            <div class="pct-wrap">
+              <input class="pct-inp" type="number" step="0.01" id="pi-${a.row}"
+                value="0" oninput="onPct(${a.row})" placeholder="0"/>
+              <span class="pct-sym">%</span>
+            </div>
+            <span class="asset-benef neu" id="ab-${a.row}">—</span>
+          </div>`).join('')}
+      </div>`;
+    div.appendChild(card);
+  });
+}
+function toggleCat(ci){document.getElementById('cat-'+ci).classList.toggle('open')}
+function rebuildPctInputs(){
+  CATS.forEach(c=>c.assets.forEach(a=>{
+    const inp=document.getElementById('pi-'+a.row);
+    if(inp&&pct[a.row]){inp.value=pct[a.row];styleInp(inp,pct[a.row]);}
+  }));
+}
+
+// ── CALC ──
+function calcA(row){
+  const ayer=valAyer[row]||0;
+  const p=pct[row]||0;
+  const benefDia=ayer*p/100;
+  const hoy=ayer+benefDia;
+  const semIni=valSem[row]||ayer;
+  const benefSem=hoy-semIni;
+  return{ayer,p,benefDia,hoy,benefSem};
+}
+function recalc(){
+  let tHoy=0,tDia=0,tSem=0,tAyer=0;
+  CATS.forEach((cat,ci)=>{
+    let cHoy=0,cDia=0,cSem=0,cAyer=0;
+    cat.assets.forEach(a=>{
+      const r=calcA(a.row);
+      cHoy+=r.hoy;cDia+=r.benefDia;cSem+=r.benefSem;cAyer+=r.ayer;
+      const ve=document.getElementById('av-'+a.row);
+      const be=document.getElementById('ab-'+a.row);
+      if(ve)ve.textContent=fE(r.hoy);
+      if(be){be.textContent=fE(r.benefDia);be.className='asset-benef '+cls(r.benefDia);}
+    });
+    tHoy+=cHoy;tDia+=cDia;tSem+=cSem;tAyer+=cAyer;
+    const cp=cAyer>0?cDia/cAyer*100:0;
+    const ve=document.getElementById('cv-'+ci);
+    const be=document.getElementById('cb-'+ci);
+    const de=document.getElementById('cd-'+ci);
+    const se=document.getElementById('cs-'+ci);
+    const pe=document.getElementById('cp-'+ci);
+    if(ve)ve.textContent=fEC(cHoy);
+    if(be){be.textContent=fP(cp);be.className='badge '+cls(cp);}
+    if(de){de.textContent=fE(cDia);de.className='cat-stat-val '+cls(cDia);}
+    if(se){se.textContent=fE(cSem);se.className='cat-stat-val '+cls(cSem);}
+    if(pe){pe.textContent=fP(cp);pe.className='cat-stat-val '+cls(cp);}
+  });
+  const dp=tAyer>0?tDia/tAyer*100:0;
+  const sp=tAyer>0?tSem/tAyer*100:0;
+  document.getElementById('kTotal').textContent=fE(tHoy);
+  document.getElementById('kTotalSub').textContent='Ayer: '+fE(tAyer);
+  const kd=document.getElementById('kDia');kd.textContent=fE(tDia);kd.className='kpi-val '+cls(tDia);
+  const kdp=document.getElementById('kDiaPct');kdp.textContent=fP(dp);kdp.className='kpi-sub '+cls(dp);
+  const ks=document.getElementById('kSem');ks.textContent=fE(tSem);ks.className='kpi-val '+cls(tSem);
+  const ksp=document.getElementById('kSemPct');ksp.textContent=fP(sp);ksp.className='kpi-sub '+cls(sp);
+}
+function onPct(row){
+  const inp=document.getElementById('pi-'+row);
+  const v=parseFloat(inp.value)||0;
+  pct[row]=v;
+  styleInp(inp,v);
+  saveState();
+  recalc();
+}
+function styleInp(inp,v){
+  inp.className='pct-inp'+(v>0?' pos':v<0?' neg':'');
+}
+
+// ── RESET ──
+function showReset(){document.getElementById('resetModal').classList.add('open')}
+function closeReset(){document.getElementById('resetModal').classList.remove('open')}
+function confirmReset(){
+  let tHoy=0,tAyer=0,tDia=0,tSem=0;
+  CATS.forEach(c=>c.assets.forEach(a=>{
+    const r=calcA(a.row);
+    tHoy+=r.hoy;tAyer+=r.ayer;tDia+=r.benefDia;tSem+=r.benefSem;
+  }));
+  const dp=tAyer>0?tDia/tAyer*100:0;
+  const sp=tAyer>0?tSem/tAyer*100:0;
+  const fecha=document.getElementById('fechaHoy').value||new Date().toISOString().split('T')[0];
+
+  // Save to historial
+  const hist=JSON.parse(localStorage.getItem('dhHist')||'[]');
+  const idx=hist.findIndex(h=>h.fecha===fecha);
+  const entry={fecha,tHoy,tAyer,tDia,tSem,dp,sp};
+  if(idx>=0)hist[idx]=entry;else hist.unshift(entry);
+  if(hist.length>90)hist.pop();
+  localStorage.setItem('dhHist',JSON.stringify(hist));
+
+  // Move values
+  CATS.forEach(c=>c.assets.forEach(a=>{
+    const r=calcA(a.row);
+    valAyer[a.row]=r.hoy;
+    pct[a.row]=0;
+    if(!valSem[a.row])valSem[a.row]=r.hoy;
+  }));
+
+  // Reset inputs
+  CATS.forEach(c=>c.assets.forEach(a=>{
+    const inp=document.getElementById('pi-'+a.row);
+    if(inp){inp.value=0;inp.className='pct-inp';}
+  }));
+
+  // Advance date by 1 day
+  const d=new Date(fecha+'T12:00:00');
+  d.setDate(d.getDate()+1);
+  const newFecha=d.toISOString().split('T')[0];
+  document.getElementById('fechaHoy').value=newFecha;
+  localStorage.setItem('dhFecha',newFecha);
+  updateDateUI(newFecha);
+  checkWeekReset(newFecha);
+
+  saveState();recalc();closeReset();
+  setStatus('ok','✅ Día guardado · '+fecha);
+}
+
+// ── HISTORIAL ──
+function switchTab(t){
+  document.getElementById('tabHoy').style.display=t==='hoy'?'block':'none';
+  document.getElementById('tabHist').style.display=t==='hist'?'block':'none';
+  document.getElementById('tbHoy').className='tab-btn'+(t==='hoy'?' active':'');
+  document.getElementById('tbHist').className='tab-btn'+(t==='hist'?' active':'');
+  if(t==='hist')renderHist();
+}
+function renderHist(){
+  const div=document.getElementById('histDiv');
+  const hist=JSON.parse(localStorage.getItem('dhHist')||'[]');
+  if(hist.length===0){
+    div.innerHTML='<div class="hist-empty">No hay registros aún.<br>Pulsa "Nuevo día" para guardar el primero.</div>';
+    return;
+  }
+  div.innerHTML='';
+  const dias=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  let lastWeek=null;
+  let weekDia=0,weekSem=0;
+
+  hist.forEach((e,i)=>{
+    const d=new Date(e.fecha+'T12:00:00');
+    const mon=getMonday(d).toISOString().split('T')[0];
+
+    if(mon!==lastWeek){
+      // Week separator
+      if(lastWeek!==null){
+        // Show week total before new week
+        const sep=div.children[div.children.length-1];
+      }
+      lastWeek=mon;
+      // Calc week total
+      const wEntries=hist.filter(h=>{
+        const hd=new Date(h.fecha+'T12:00:00');
+        return getMonday(hd).toISOString().split('T')[0]===mon;
+      });
+      const wTotal=wEntries.reduce((s,h)=>s+(h.tDia||0),0);
+      const wPct=wEntries.length>0&&wEntries[wEntries.length-1].tAyer>0?
+        wTotal/wEntries[wEntries.length-1].tAyer*100:0;
+      const monD=new Date(mon+'T12:00:00');
+      const sunD=new Date(monD);sunD.setDate(sunD.getDate()+6);
+      const fmt=x=>x.toLocaleDateString('es-ES',{day:'numeric',month:'short'});
+      const sep=document.createElement('div');
+      sep.className='hist-week-sep';
+      sep.innerHTML=`
+        <span class="hist-week-lbl">Semana ${fmt(monD)} – ${fmt(sunD)}</span>
+        <div class="hist-week-line"></div>
+        <span class="hist-week-total ${wTotal>=0?'pos':'neg'}"
+          style="background:${wTotal>=0?'var(--green_lt)':'var(--red_lt)'};color:${wTotal>=0?'var(--green)':'var(--red)'}">
+          ${wTotal>=0?'+':''}${wTotal.toFixed(0)}€ · ${fP(wPct)}
+        </span>`;
+      div.appendChild(sep);
+    }
+
+    const card=document.createElement('div');
+    card.className='hist-card';
+    const dc=e.tDia>=0?'pos':'neg';
+    const sc=(e.tSem||0)>=0?'pos':'neg';
+    card.innerHTML=`
+      <div class="hist-hdr">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="hist-date">${d.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'})}</span>
+          <span class="hist-day">${dias[d.getDay()]}</span>
+        </div>
+        <span style="font-family:'SF Mono',monospace;font-size:12px;font-weight:700;color:var(--muted)">${fEC(e.tHoy)}</span>
+      </div>
+      <div class="hist-grid">
+        <div class="hist-cell">
+          <div class="hist-cell-lbl">Benef. Día</div>
+          <div class="hist-cell-val ${dc}">${fE(e.tDia)}</div>
+          <div class="hist-cell-sub ${dc}">${fP(e.dp||0)}</div>
+        </div>
+        <div class="hist-cell">
+          <div class="hist-cell-lbl">Benef. Semana</div>
+          <div class="hist-cell-val ${sc}">${fE(e.tSem||0)}</div>
+          <div class="hist-cell-sub ${sc}">${fP(e.sp||0)}</div>
+        </div>
+        <div class="hist-cell">
+          <div class="hist-cell-lbl">Valor Cartera</div>
+          <div class="hist-cell-val">${fEC(e.tHoy)}</div>
+        </div>
+      </div>`;
+    div.appendChild(card);
+  });
+}
+function clearHist(){
+  if(confirm('¿Borrar todo el historial?')){
+    localStorage.removeItem('dhHist');
+    renderHist();
+  }
+}
+
+// ── STATE ──
+function saveState(){
+  localStorage.setItem('dhAyer',JSON.stringify(valAyer));
+  localStorage.setItem('dhSem',JSON.stringify(valSem));
+  localStorage.setItem('dhPct',JSON.stringify(pct));
+}
+function loadState(){
+  const a=localStorage.getItem('dhAyer');if(a)valAyer=JSON.parse(a);
+  const s=localStorage.getItem('dhSem');if(s)valSem=JSON.parse(s);
+  const p=localStorage.getItem('dhPct');if(p)pct=JSON.parse(p);
+}
+
+// ── INIT ──
+document.getElementById('resetModal').addEventListener('click',function(e){if(e.target===this)closeReset();});
+document.getElementById('cfgId').value=cfg.sheetId;
+document.getElementById('cfgKey').value=cfg.apiKey;
+loadState();
+buildCats();
+initDate();
+rebuildPctInputs();
+recalc();
+if(cfg.sheetId&&cfg.apiKey){loadData();}
+else{toggleCfg();setStatus('err','Configura el Google Sheet');}
+</script>
+</body>
+</html>
